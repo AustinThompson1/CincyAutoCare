@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CincyAutoCare")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d829ba387e6322244428e92d5d9a37fe10bf6817")]
 [assembly: System.Reflection.AssemblyProductAttribute("CincyAutoCare")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CincyAutoCare")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
