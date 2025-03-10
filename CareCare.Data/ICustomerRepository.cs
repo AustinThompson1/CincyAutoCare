@@ -11,5 +11,8 @@ namespace CareCare.Data
         public void AddCustomer(Customer customer);
         public Customer GetCustomerById(int customerId);
         public List<Customer> GetAllCustomers();
+        public void DeleteCustomer(int customerId);
+        public void UpdateCustomer(Customer customer);
+        public void ResetDatabase();
     }
 }

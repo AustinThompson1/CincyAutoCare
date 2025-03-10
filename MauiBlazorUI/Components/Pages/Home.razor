@@ -1,12 +1,12 @@
 ﻿@page "/"
 @using System.Diagnostics
 @using System.Text.Json
-@using Data
+@using CareCare.Data
 
 <h1>Hello, world!</h1>
 
 <div>
-    <MudBlazor.MudDataGrid @ref="mudDataGrid" T="Product" Items="@_products"
+    <MudBlazor.MudDataGrid @ref="mudDataGrid" T="Customer" Items="@_customers"
     ReadOnly="false" EditMode="DataGridEditMode.Form"
     StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
     Filterable="true" SortMode="SortMode.Multiple" Groupable="true" Hover="false" Dense="true" Striped="true" Bordered="true"
@@ -24,20 +24,19 @@
             <PropertyColumn Property="c => c.Overhead" />
             <PropertyColumn Property="c => c.AmountChargedToCustomer" />
             <PropertyColumn Property="c => c.Vehicles" />
-            <PropertyColumn Property="c => c." />
-            <PropertyColumn Property="c => c." />
+
             @* <TemplateColumn CellClass="d-flex justify-end"> *@
-            <TemplateColumn>
-                <CellTemplate>
-                    <div class="d-flex justify-end" >
-                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
-                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(()=>DeleteItem(context.Item))" />
+            @* <TemplateColumn>
+                 <CellTemplate Context="context">
+                    <div class="d-flex justify-end">
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => await context.Actions.StartEditingItemAsync(context.Item))" />
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteItem(context.Item))" />
                     </div>
                 </CellTemplate>
-            </TemplateColumn>
+            </TemplateColumn> *@
         </Columns>
         <PagerContent>
-            <MudDataGridPager T="Product" />
+            <MudDataGridPager T="Customer" />
         </PagerContent>
     </MudBlazor.MudDataGrid>
 </div>
@@ -77,19 +76,19 @@
 
 @code {
 
-    ProductRepository _repository = new ProductRepository();
-    List<IProduct> _iProducts = new List<IProduct>();
-    List<Product> _products = new List<Product>();
-    private MudDataGrid<Product> mudDataGrid = new MudDataGrid<Product>();
+    CustomerRepository _repository = new CustomerRepository();
+    List<ICustomer> _iCustomers = new List<ICustomer>();
+    List<Customer> _customers = new List<Customer>();
+    private MudDataGrid<Customer> mudDataGrid = new MudDataGrid<Customer>();
     private List<string> _events = new();
     int i;
 
     protected override void OnInitialized()
     {
         LogEvent("*** Event = OnInitialized()");
-        _iProducts = _repository.GetAllProducts();
-        _products = _iProducts.Cast<Product>().ToList();
-        LogEvent($" ... Products Loaded: {_products.Count()}");
+        _iCustomers = _repository.GetAllCustomers();
+        _customers = _iCustomers.Cast<Customer>().ToList();
+        LogEvent($" ... Products Loaded: {_customers.Count()}");
     }
 
     private void LoadData()
@@ -98,13 +97,13 @@
 
 
         LogEvent(" ... Checking Database");
-        _iProducts = _repository.GetAllProducts();
-        _products = _iProducts.Cast<Product>().ToList();
-        if (_products.Count == 0)
+        _iCustomers = _repository.GetAllCustomers();
+        _customers = _iCustomers.Cast<Customer>().ToList();
+        if (_customers.Count == 0)
         {
             LogEvent(" ... No Products found, getting test data");
-            _iProducts = Data.TestIProducts.GetTestProducts();
-            _products = _iProducts.Cast<Product>().ToList();
+            _iCustomers = CareCare.Data.TestICustomers.GetTestCustomers();
+            _customers = _iCustomers.Cast<Customer>().ToList();
             LogEvent(" ... Adding Products to Db");
 
             // Lets check adding one product ...
@@ -116,7 +115,7 @@
             // Debug.WriteLine($"Result Id: {JsonSerializer.Serialize(result)}");
 
             // now lets add them all
-            _products.ForEach(p => _repository.AddProduct(p));
+            _customers.ForEach(c => _repository.AddCustomer(c));
             LogEvent(" ... Finished Initializing Data");
         }
         else LogEvent(" ... Warning: Database is not empty.");
@@ -129,47 +128,52 @@
         _events.Insert(0, message);
     }
 
-    private void StartedEditingItem(Product product)
+    private void StartedEditingItem(Customer customer)
     {
-        LogEvent($"*** Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(product)}");
+        LogEvent($"*** Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(customer)}");
     }
 
-    private void CanceledEditingItem(Product product)
+    private void CanceledEditingItem(Customer customer)
     {
-        LogEvent($"*** Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(product)}");
+        LogEvent($"*** Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(customer)}");
     }
 
-    private void CommittedItemChanges(Product product)
+    private void CommittedItemChanges(Customer customer)
     {
-        LogEvent($"*** Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(product)}");
-        _repository.UpdateProduct(product);
+        LogEvent($"*** Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(customer)}");
+        _repository.UpdateCustomer(customer);
 
     }
 
-    private void DeleteItem(Product product)
+    private void DeleteItem(Customer customer)
     {
-        LogEvent($"*** Event = DeleteItem, Data = {System.Text.Json.JsonSerializer.Serialize(product)}");
-        _products.Remove(product);
-        _repository.DeleteProduct(product.Id);
+        LogEvent($"*** Event = DeleteItem, Data = {System.Text.Json.JsonSerializer.Serialize(customer)}");
+        _customers.Remove(customer);
+        _repository.DeleteCustomer(customer.CustomerId);
     }
 
     private void NewItem()
     {
         LogEvent($"*** Event = NewItem, Start");
-        var newProduct = new Product()
+        var newCustomer = new Customer()
             {
-                Id = _products.Count() > 0 ? _products.Max(p => p.Id) + 1 : 1,
-                Brand = "New Brand",
-                Name = "New Name",
-                Description = "New Description",
-                Quantity = 0,
-                Price = 0
+                CustomerId = _customers.Count() > 0 ? _customers.Max(p => p.CustomerId) + 1 : 1,
+                CustomerName = "John Doe",
+                PhoneNumber = "888-888-8888",
+                Email = "JohnDoe@gmail.com",
+                ServiceDate = "yyyy-MM-dd",
+                VehicleIsDetailed = false,
+                VehicleIsTinted = false,
+                TotalCostOfServices = 0,
+                Overhead = 0,
+                AmountChargedToCustomer = 0,
+                Vehicles = new List<Vehicles>(),
             };
-        _products.Add(newProduct);
-        _repository.AddProduct(newProduct);
+        _customers.Add(newCustomer);
+        _repository.AddCustomer(newCustomer);
 
-        mudDataGrid.SetEditingItemAsync(newProduct);
-        LogEvent($" ... NewItem, Data = {System.Text.Json.JsonSerializer.Serialize(newProduct)}");
+        mudDataGrid.SetEditingItemAsync(newCustomer);
+        LogEvent($" ... NewItem, Data = {System.Text.Json.JsonSerializer.Serialize(newCustomer)}");
 
     }
 
@@ -177,7 +181,7 @@
     {
         LogEvent($"*** Event = ClearDb");
         _repository.ResetDatabase();
-        _products.Clear();
+        _customers.Clear();
     }
 }
 

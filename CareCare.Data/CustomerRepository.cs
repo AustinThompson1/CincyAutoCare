@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CareCare.Data
 {
-    class CustomerRepository
+    public class CustomerRepository : ICustomerRepository
     {
         private readonly CustomerContext _dbContext;
         public CustomerRepository()
@@ -35,5 +35,24 @@ namespace CareCare.Data
         }
 
         public List<Customer> GetAllCustomers() => _dbContext.Customers.ToList();
+        public void UpdateCustomer(Customer customer)
+        {
+            _dbContext.Customers.Update(customer);
+            _dbContext.SaveChanges();
+        }
+        public void DeleteCustomer(int customerId)
+        {
+            var customer = _dbContext.Customers.SingleOrDefault(x => x.CustomerId == customerId);
+            if (customer != null)
+            {
+                _dbContext.Customers.Remove(customer);
+                _dbContext.SaveChanges();
+            }
+        }
+        public void ResetDatabase()
+        {
+            _dbContext.Database.EnsureDeleted();
+            _dbContext.Database.EnsureCreated();
+        }
     }
 }

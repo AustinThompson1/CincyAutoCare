@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-
+using CareCare.Data;
+using Microsoft.EntityFrameworkCore;
 namespace MauiBlazorUI;
 
 public static class MauiProgram
@@ -15,6 +16,8 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddMauiBlazorWebView();
+		builder.Services.AddDbContext<CustomerContext>(options =>
+            options.UseSqlite("Data Source=customer.db"));
 
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();

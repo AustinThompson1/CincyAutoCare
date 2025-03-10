@@ -7,14 +7,16 @@ namespace CareCare.Data
     {
         public Int32 CustomerId { get; set; }
         public string CustomerName { get; set; }
-        public PhoneAttribute? PhoneNumber { get; set; }
-        public EmailAddressAttribute? Email { get; set; }
+        [Phone]
+        public string PhoneNumber { get; set; }
+        [EmailAddress]
+        public string? Email { get; set; }
 
         [NotMapped]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
-        public DateOnly ServiceDate { get; set; }
-        public bool VehicleIsDetailed { get; set; }
-        public bool VehicleIsTinted { get; set; }
+        public string ServiceDate { get; set; }
+        public bool VehicleIsDetailed { get; set; } = false;
+        public bool VehicleIsTinted { get; set; } = false;
         public decimal TotalCostOfServices { get; set; }
         public decimal Overhead { get; set; }
         public decimal AmountChargedToCustomer { get; set; }
