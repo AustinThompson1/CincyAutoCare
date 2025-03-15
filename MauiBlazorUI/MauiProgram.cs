@@ -2,6 +2,7 @@
 using CareCare.Data;
 using Microsoft.EntityFrameworkCore;
 namespace MauiBlazorUI;
+using MudBlazor.Services;
 
 public static class MauiProgram
 {
@@ -17,9 +18,10 @@ public static class MauiProgram
 
 		builder.Services.AddMauiBlazorWebView();
 		builder.Services.AddDbContext<CustomerContext>();
+		builder.Services.AddMudServices();
 
 #if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
+        builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
 

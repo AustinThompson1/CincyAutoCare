@@ -31,7 +31,6 @@ namespace CareCare.Data
                 Console.WriteLine("CustomerId does not exist");
                 return null;
             }
-            return _dbContext.Customers.SingleOrDefault(x => x.CustomerId == customerId);
         }
 
         public List<Customer> GetAllCustomers() => _dbContext.Customers.ToList();
