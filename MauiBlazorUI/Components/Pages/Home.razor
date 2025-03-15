@@ -2,6 +2,7 @@
 @using System.Diagnostics
 @using System.Text.Json
 @using CareCare.Data
+@using MudBlazor
 
 <h1>Hello, world!</h1>
 
@@ -15,7 +16,6 @@
             <PropertyColumn Property="c => c.CustomerId" />
             <PropertyColumn Property="c => c.CustomerName" />
             <PropertyColumn Property="c => c.PhoneNumber" />
-            <PropertyColumn Property="c => c.Description" />
             <PropertyColumn Property="c => c.Email" />
             <PropertyColumn Property="c => c.ServiceDate" />
             <PropertyColumn Property="c => c.VehicleIsDetailed" />
@@ -23,7 +23,7 @@
             <PropertyColumn Property="c => c.TotalCostOfServices" />
             <PropertyColumn Property="c => c.Overhead" />
             <PropertyColumn Property="c => c.AmountChargedToCustomer" />
-            <PropertyColumn Property="c => c.Vehicles" />
+            @* <PropertyColumn Property="c => c.Vehicles" /> *@
 
             @* <TemplateColumn CellClass="d-flex justify-end"> *@
             @* <TemplateColumn>
@@ -77,7 +77,7 @@
 @code {
 
     CustomerRepository _repository = new CustomerRepository();
-    List<ICustomer> _iCustomers = new List<ICustomer>();
+    // List<ICustomer> _iCustomers = new List<ICustomer>();
     List<Customer> _customers = new List<Customer>();
     private MudDataGrid<Customer> mudDataGrid = new MudDataGrid<Customer>();
     private List<string> _events = new();
@@ -86,8 +86,8 @@
     protected override void OnInitialized()
     {
         LogEvent("*** Event = OnInitialized()");
-        _iCustomers = _repository.GetAllCustomers();
-        _customers = _iCustomers.Cast<Customer>().ToList();
+        // _iCustomers = _repository.GetAllCustomers();
+        _customers = _repository.GetAllCustomers().Cast<Customer>().ToList();
         LogEvent($" ... Products Loaded: {_customers.Count()}");
     }
 
@@ -97,13 +97,13 @@
 
 
         LogEvent(" ... Checking Database");
-        _iCustomers = _repository.GetAllCustomers();
-        _customers = _iCustomers.Cast<Customer>().ToList();
+        // _iCustomers = _repository.GetAllCustomers();
+        _customers = _repository.GetAllCustomers().Cast<Customer>().ToList();
         if (_customers.Count == 0)
         {
             LogEvent(" ... No Products found, getting test data");
-            _iCustomers = CareCare.Data.TestICustomers.GetTestCustomers();
-            _customers = _iCustomers.Cast<Customer>().ToList();
+            // _iCustomers = CareCare.Data.TestICustomers.GetTestCustomers();
+            _customers = CareCare.Data.TestCustomers.GetTestCustomers().Cast<Customer>().ToList();
             LogEvent(" ... Adding Products to Db");
 
             // Lets check adding one product ...
@@ -167,7 +167,7 @@
                 TotalCostOfServices = 0,
                 Overhead = 0,
                 AmountChargedToCustomer = 0,
-                Vehicles = new List<Vehicles>(),
+                // Vehicles = new List<Vehicles>(),
             };
         _customers.Add(newCustomer);
         _repository.AddCustomer(newCustomer);

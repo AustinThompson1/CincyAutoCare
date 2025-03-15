@@ -16,8 +16,7 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddMauiBlazorWebView();
-		builder.Services.AddDbContext<CustomerContext>(options =>
-            options.UseSqlite("Data Source=customer.db"));
+		builder.Services.AddDbContext<CustomerContext>();
 
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();

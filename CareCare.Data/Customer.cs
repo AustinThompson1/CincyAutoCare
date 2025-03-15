@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CareCare.Data
 {
-    public class Customer
+    public class Customer : ICustomer
     {
         public Int32 CustomerId { get; set; }
         public string CustomerName { get; set; }
@@ -20,7 +20,7 @@ namespace CareCare.Data
         public decimal TotalCostOfServices { get; set; }
         public decimal Overhead { get; set; }
         public decimal AmountChargedToCustomer { get; set; }
-        public ICollection<Vehicles> Vehicles { get; set; }
+        //public ICollection<Vehicles> Vehicles { get; set; }
 
         
     }
