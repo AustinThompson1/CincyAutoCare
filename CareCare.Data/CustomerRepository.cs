@@ -52,7 +52,7 @@ namespace CareCare.Data
             return list;
         }
         public void UpdateCustomer(Customer customer)
-        {
+        { 
             _dbContext.Customers.Update(customer);
             _dbContext.SaveChanges();
         }
