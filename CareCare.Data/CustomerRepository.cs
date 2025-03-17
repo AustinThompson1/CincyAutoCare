@@ -12,9 +12,22 @@ namespace CareCare.Data
         public CustomerRepository()
         {
             _dbContext = new CustomerContext();
+            if (_dbContext == null)
+            {
+                throw new ArgumentNullException(nameof(_dbContext));
+            }
+        }
+        public CustomerRepository(CustomerContext dbContext)
+        {
+            _dbContext = dbContext;
+            if (_dbContext == null)
+            {
+                throw new ArgumentNullException(nameof(_dbContext));
+            }
         }
         public void AddCustomer(Customer customer)
         {
+            customer.CustomerId = 0;
             _dbContext.Customers.Add(customer);
             _dbContext.SaveChanges();
         }
@@ -33,7 +46,11 @@ namespace CareCare.Data
             }
         }
 
-        public List<Customer> GetAllCustomers() => _dbContext.Customers.ToList();
+        public List<Customer> GetAllCustomers()
+        {
+            List<Customer> list =_dbContext.Customers.Cast<Customer>().ToList();
+            return list;
+        }
         public void UpdateCustomer(Customer customer)
         {
             _dbContext.Customers.Update(customer);
@@ -52,6 +69,8 @@ namespace CareCare.Data
         {
             _dbContext.Database.EnsureDeleted();
             _dbContext.Database.EnsureCreated();
+            _dbContext.SaveChanges();
+            _dbContext.ChangeTracker.Clear();
         }
     }
 }

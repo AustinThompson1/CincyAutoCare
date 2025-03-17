@@ -18,7 +18,8 @@ public static class MauiProgram
 
 		builder.Services.AddMauiBlazorWebView();
 		builder.Services.AddDbContext<CustomerContext>();
-		builder.Services.AddMudServices();
+		builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+        builder.Services.AddMudServices();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
