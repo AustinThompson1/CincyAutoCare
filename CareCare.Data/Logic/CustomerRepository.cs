@@ -1,10 +1,11 @@
-﻿using System;
+﻿using CareCare.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CareCare.Data
+namespace CareCare.Data.Logic
 {
     public class CustomerRepository : ICustomerRepository
     {
@@ -27,16 +28,16 @@ namespace CareCare.Data
         }
         public void AddCustomer(Customer customer)
         {
-            customer.CustomerId = 0;
+            customer.Id = 0;
             _dbContext.Customers.Add(customer);
             _dbContext.SaveChanges();
         }
 
-        public Customer GetCustomerById(int customerId)
+        public Customer GetCustomerById(int id)
         {
             try
             {
-                return _dbContext.Customers.SingleOrDefault(x => x.CustomerId == customerId)
+                return _dbContext.Customers.SingleOrDefault(x => x.Id == id)
                 ?? throw new Exception("CustomerId does not exist");
             }
             catch (Exception)
@@ -56,9 +57,9 @@ namespace CareCare.Data
             _dbContext.Customers.Update(customer);
             _dbContext.SaveChanges();
         }
-        public void DeleteCustomer(int customerId)
+        public void DeleteCustomer(int id)
         {
-            var customer = _dbContext.Customers.SingleOrDefault(x => x.CustomerId == customerId);
+            var customer = _dbContext.Customers.SingleOrDefault(x => x.Id == id);
             if (customer != null)
             {
                 _dbContext.Customers.Remove(customer);

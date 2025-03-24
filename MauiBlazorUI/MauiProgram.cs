@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using CareCare.Data;
 using Microsoft.EntityFrameworkCore;
 namespace MauiBlazorUI;
+
+using CareCare.Data.Logic;
 using MudBlazor.Services;
 
 public static class MauiProgram

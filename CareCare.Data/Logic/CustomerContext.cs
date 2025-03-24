@@ -4,15 +4,16 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.ComponentModel.DataAnnotations;
+using CareCare.Data.Models;
 
-namespace CareCare.Data
+namespace CareCare.Data.Logic
 {
 
     public class CustomerContext : DbContext
     {
         public DbSet<Customer> Customers { get; set; }
         //public DbSet<Vehicles> Vehicle { get; set; }
-        //public DbSet<Tinting> Tinting { get; set; }
+        public DbSet<Tinting> Tinting { get; set; }
 
         public string DbPath { get; }
         public bool VerboseSQL { get; set; } = true;
@@ -29,8 +30,9 @@ namespace CareCare.Data
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            DbPath = System.IO.Path.Join(path, "customer.db");
-            this.Database.EnsureCreated();
+            DbPath = Path.Join(path, "customer.db");
+            Database.EnsureDeleted();
+            Database.EnsureCreated();
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

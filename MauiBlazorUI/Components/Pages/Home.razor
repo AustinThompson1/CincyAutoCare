@@ -2,9 +2,11 @@
 @using System.Diagnostics
 @using System.Text.Json
 @using CareCare.Data
+@using CareCare.Data.Logic
+@using CareCare.Data.Models
 @using MudBlazor
+@using CareCare.Data.Logic;
 
-<h1>Hells Yeah, check this shit out G</h1>
 
 <div>
     <MudBlazor.MudDataGrid @ref="mudDataGrid" T="Customer" Items="@_customers"
@@ -13,7 +15,6 @@
     Filterable="true" SortMode="SortMode.Multiple" Groupable="true" Hover="false" Dense="true" Striped="true" Bordered="true"
     FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
         <Columns>
-            <PropertyColumn Property="c => c.CustomerId" />
             <PropertyColumn Property="c => c.CustomerName" />
             <PropertyColumn Property="c => c.PhoneNumber" />
             <PropertyColumn Property="c => c.Email" />
@@ -23,8 +24,9 @@
             <PropertyColumn Property="c => c.TotalCostOfServices" />
             <PropertyColumn Property="c => c.Overhead" />
             <PropertyColumn Property="c => c.AmountChargedToCustomer" />
+
             <TemplateColumn>
-                 <CellTemplate>
+                <CellTemplate>
                     <div class="d-flex justify-end">
                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteItem(context.Item))" />
@@ -38,39 +40,6 @@
     </MudBlazor.MudDataGrid>
 </div>
 
-@* <div>
-    <MudTable Items="@_customers" Hover="true" Filterable="true" Sortable="true" Bordered="true" Striped="true">
-        <HeaderContent>
-            <MudTh>Customer ID</MudTh>
-            <MudTh>Customer Name</MudTh>
-            <MudTh>Phone Number</MudTh>
-            <MudTh>Email</MudTh>
-            <MudTh>Service Date</MudTh>
-            <MudTh>Vehicle Detailed</MudTh>
-            <MudTh>Vehicle Tinted</MudTh>
-            <MudTh>Total Cost</MudTh>
-            <MudTh>Overhead</MudTh>
-            <MudTh>Amount Charged</MudTh>
-            <MudTh>Actions</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Customer ID">@context.CustomerId</MudTd>
-            <MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
-            <MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
-            <MudTd DataLabel="Email">@context.Email</MudTd>
-            <MudTd DataLabel="Service Date">@context.ServiceDate</MudTd>
-            <MudTd DataLabel="Vehicle Detailed">@context.VehicleIsDetailed</MudTd>
-            <MudTd DataLabel="Vehicle Tinted">@context.VehicleIsTinted</MudTd>
-            <MudTd DataLabel="Total Cost">@context.TotalCostOfServices</MudTd>
-            <MudTd DataLabel="Overhead">@context.Overhead</MudTd>
-            <MudTd DataLabel="Amount Charged">@context.AmountChargedToCustomer</MudTd>
-            <MudTd DataLabel="Actions">@*  
-                <MudIconButton Size="Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => StartEditingItem(context))" />
-                <MudIconButton Size="Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteItem(context))" /> 
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
-</div> *@
 
 <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@NewItem">New Item</MudButton>
 &emsp;
@@ -93,14 +62,14 @@
         }
         @foreach (var message in _events)
         {
-                <MudText Typo="@Typo.body2">[@(i--)]@message</MudText>
+            <MudText Typo="@Typo.body2">[@(i--)]@message</MudText>
         }
         @if (_events.Count > 0)
         {
-                <div class="d-flex">
-                    <MudSpacer />
-                    <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@(() => _events.Clear())">Clear</MudButton>
-                </div>
+            <div class="d-flex">
+                <MudSpacer />
+                <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@(() => _events.Clear())">Clear</MudButton>
+            </div>
         }
     </MudExpansionPanel>
 </MudExpansionPanels>
@@ -133,10 +102,9 @@
         if (_customers.Count == 0)
         {
             LogEvent(" ... No Products found, getting test data");
-            // _iCustomers = CareCare.Data.TestICustomers.GetTestCustomers();
-            _customers = CareCare.Data.TestCustomers.GetTestCustomers().Cast<Customer>().ToList();
+            // _iCustomers = CareCare.Data.TestICustomers.GetTestCustomers() _customers = CareCare.Data.TestCustomers.GetTestCustomers().Cast<Customer>().ToList();
             LogEvent(" ... Adding Products to Db");
-
+            _customers = CareCare.Data.Logic.TestCustomers.GetTestCustomers().Cast<Customer>().ToList();
             // Lets check adding one product ...
             // Product product = _products.First();
             // Debug.WriteLine($"Product: {product}");
@@ -180,7 +148,7 @@
     {
         LogEvent($"*** Event = DeleteItem, Data = {System.Text.Json.JsonSerializer.Serialize(customer)}");
         _customers.Remove(customer);
-        _repository.DeleteCustomer(customer.CustomerId);
+        _repository.DeleteCustomer(customer.Id);
     }
 
     private void NewItem()
@@ -188,17 +156,16 @@
         LogEvent($"*** Event = NewItem, Start");
         var newCustomer = new Customer()
             {
-                CustomerId = _customers.Count() > 0 ? _customers.Max(p => p.CustomerId) + 1 : 1,
+                Id = _customers.Count() > 0 ? _customers.Max(p => p.Id) + 1 : 1,
                 CustomerName = "John Doe",
                 PhoneNumber = "888-888-8888",
                 Email = "JohnDoe@gmail.com",
                 ServiceDate = "yyyy-MM-dd",
-                VehicleIsDetailed = false,
-                VehicleIsTinted = false,
+                VehicleIsDetailed = "false",
+                VehicleIsTinted = "false",
                 TotalCostOfServices = 0,
                 Overhead = 0,
                 AmountChargedToCustomer = 0,
-                // Vehicles = new List<Vehicles>(),
             };
         _customers.Add(newCustomer);
         _repository.AddCustomer(newCustomer);
